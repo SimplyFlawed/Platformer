@@ -84,5 +84,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SDL2_mixer.dll" />
+    <None Include="shaders\fragment_lit.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shaders\vertex_lit.glsl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

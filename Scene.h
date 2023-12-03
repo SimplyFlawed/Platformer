@@ -45,7 +45,7 @@ public:
           BG_GREEN,
           BG_BLUE,
           BG_OPACITY;
-    
+
     GameState m_state;
     
     // ————— METHODS ————— //

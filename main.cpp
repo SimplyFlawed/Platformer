@@ -50,12 +50,14 @@ const char GAME_WINDOW_NAME[] = "Platformer";
 const char  V_SHADER_PATH[] = "shaders/vertex_textured.glsl",
             F_SHADER_PATH[] = "shaders/fragment_textured.glsl";
 
+const char V_LIT_SHADER_PATH[] = "shaders/vertex_lit.glsl",
+           F_LIT_SHADER_PATH[] = "shaders/fragment_lit.glsl";
+
 const float MILLISECONDS_IN_SECOND = 1000.0;
 
 const int NUMBER_OF_TEXTURES = 1;
 const GLint LEVEL_OF_DETAIL = 0;
 const GLint TEXTURE_BORDER = 0;
-const int FONTBANK_SIZE = 16;
 
 GLuint font_texture_id;
 
@@ -83,7 +85,16 @@ int g_number_of_lives = 3;
 
 void switch_to_scene(Scene* scene)
 {
+    if (scene == g_level_a) { g_shader_program.load(V_LIT_SHADER_PATH, F_LIT_SHADER_PATH); }
+    else { g_shader_program.load(V_SHADER_PATH, F_SHADER_PATH); }
+
+    g_view_matrix = glm::mat4(1.0f);
+    g_projection_matrix = glm::ortho(-5.0f, 5.0f, -3.75f, 3.75f, -1.0f, 1.0f);
+    g_shader_program.set_projection_matrix(g_projection_matrix);
+    g_shader_program.set_view_matrix(g_view_matrix);
+    glUseProgram(g_shader_program.get_program_id());
     glClearColor(scene->BG_RED, scene->BG_GREEN, scene->BG_BLUE, scene->BG_OPACITY);
+
     g_current_scene = scene;
     g_current_scene->initialise();
 }
@@ -294,9 +305,9 @@ void update()
 void render()
 {
     g_shader_program.set_view_matrix(g_view_matrix);
-
+    if (g_current_scene == g_level_a) g_shader_program.set_light_position(g_current_scene->m_state.player->get_position());
     glClear(GL_COLOR_BUFFER_BIT);
-
+    glUseProgram(g_shader_program.get_program_id());
     g_current_scene->render(&g_shader_program);
 
     if (g_win) Utility::draw_text(&g_shader_program, font_texture_id, "YOU WIN", 0.3f, 0.0f, glm::vec3(g_current_scene->m_state.player->get_position().x - 1.0f, g_current_scene->m_state.player->get_position().y + 2.0f, 0.0f));
@@ -308,7 +319,10 @@ void render()
 void shutdown()
 {
     SDL_Quit();
+    delete g_start_screen;
+    delete g_level_a;
     delete g_level_b;
+    delete g_level_c;
 }
 
 // ————— GAME LOOP ————— //
