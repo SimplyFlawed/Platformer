@@ -42,7 +42,8 @@ void LevelB::initialise()
     // Existing
     m_state.player = new Entity();
     m_state.player->set_entity_type(PLAYER);
-    m_state.player->set_position(glm::vec3(1.0f, -8.0f, 0.0f));
+    m_state.player->set_position(glm::vec3(1.0f, -9.0f, 0.0f));
+    m_state.player->set_init_pos(glm::vec3(1.0f, -9.0f, 0.0f));
     m_state.player->set_movement(glm::vec3(0.0f));
     m_state.player->set_speed(2.5f);
     m_state.player->set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
@@ -78,7 +79,7 @@ void LevelB::initialise()
     m_state.enemies[0].set_position(glm::vec3(16.0f, -9.0f, 0.0f));
     m_state.enemies[0].set_init_pos(glm::vec3(16.0f, -9.0f, 0.0f));
     m_state.enemies[0].set_movement(glm::vec3(-1.0f, 0.0f, 0.0f));
-    m_state.enemies[0].set_speed(0.5f);
+    m_state.enemies[0].set_speed(2.5f);
     m_state.enemies[0].set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
     
     m_state.enemies[0].m_walking[m_state.enemies[0].LEFT] = new int[2] { 0, 1 };
@@ -139,11 +140,7 @@ void LevelB::initialise()
     
     
     // ————— AUDIO SET-UP ————— //
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
-
-    m_state.bgm = Mix_LoadMUS("assets/audio/tabun.wav");
-    Mix_PlayMusic(m_state.bgm, -1);
-    Mix_VolumeMusic(MIX_MAX_VOLUME / 32.0f);
+    Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 4096);
 
     m_state.jump_sfx = Mix_LoadWAV("assets/audio/jump1.wav");
     Mix_VolumeChunk(m_state.jump_sfx, MIX_MAX_VOLUME / 32.0f);

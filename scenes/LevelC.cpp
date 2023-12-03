@@ -8,8 +8,8 @@
 unsigned int LEVEL_C_DATA[] =
 {
     0,0,0,0,0,0,0,0,0,0,0,0,37,38,38,
-    0,0,0,0,0,0,0,0,0,0,0,0,37,38,38,
-    0,0,0,0,0,0,0,0,0,0,0,0,57,58,97,
+    0,111,0,0,0,0,0,0,0,0,0,0,37,38,38,
+    0,131,0,0,0,0,0,0,0,0,0,0,57,58,97,
     153,154,155,0,0,0,0,0,0,0,0,0,0,0,138,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,96,
     0,0,0,0,0,0,0,156,0,0,0,0,0,0,116,
@@ -62,6 +62,7 @@ void LevelC::initialise()
     m_state.player = new Entity();
     m_state.player->set_entity_type(PLAYER);
     m_state.player->set_position(glm::vec3(1.0f, -25.0f, 0.0f));
+    m_state.player->set_init_pos(glm::vec3(1.0f, -25.0f, 0.0f));
     m_state.player->set_movement(glm::vec3(0.0f));
     m_state.player->set_speed(2.5f);
     m_state.player->set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
@@ -96,7 +97,7 @@ void LevelC::initialise()
     m_state.enemies[0].set_position(glm::vec3(4.0f, -12.0f, 0.0f));
     m_state.enemies[0].set_init_pos(glm::vec3(4.0f, -12.0f, 0.0f));
     m_state.enemies[0].set_movement(glm::vec3(0.0f, -1.0f, 0.0f));
-    m_state.enemies[0].set_speed(1.5f);
+    m_state.enemies[0].set_speed(3.5f);
     m_state.enemies[0].set_acceleration(glm::vec3(0.0f, 0.0f, 0.0f));
     
     m_state.enemies[0].m_walking[m_state.enemies[0].IDLE] = new int[3] { 24, 25, 26 };
@@ -117,7 +118,7 @@ void LevelC::initialise()
     m_state.enemies[1].set_position(glm::vec3(4.0f, -5.0f, 0.0f));
     m_state.enemies[1].set_init_pos(glm::vec3(4.0f, -5.0f, 0.0f));
     m_state.enemies[1].set_movement(glm::vec3(0.0f, -1.0f, 0.0f));
-    m_state.enemies[1].set_speed(1.5f);
+    m_state.enemies[1].set_speed(2.0f);
     m_state.enemies[1].set_acceleration(glm::vec3(0.0f, 0.0f, 0.0f));
     
     m_state.enemies[1].m_walking[m_state.enemies[1].IDLE] = new int[3] { 24, 25, 26 };
@@ -131,13 +132,8 @@ void LevelC::initialise()
     m_state.enemies[1].set_height(0.8f);
     m_state.enemies[1].set_width(0.8f);
     
-    
     // ————— AUDIO SET-UP ————— //
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
-
-    m_state.bgm = Mix_LoadMUS("assets/audio/tabun.wav");
-    Mix_PlayMusic(m_state.bgm, -1);
-    Mix_VolumeMusic(MIX_MAX_VOLUME / 32.0f);
+    Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 4096);
 
     m_state.jump_sfx = Mix_LoadWAV("assets/audio/jump1.wav");
     Mix_VolumeChunk(m_state.jump_sfx, MIX_MAX_VOLUME / 32.0f);
@@ -162,6 +158,7 @@ void LevelC::render(ShaderProgram *program)
 {
     m_state.map->render(program);
     m_state.player->render(program);
+    m_state.enemies->render(program);
     for (int i = 0; i < ENEMY_COUNT; i++)
     {
         m_state.enemies[i].render(program);

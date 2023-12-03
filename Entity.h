@@ -1,7 +1,7 @@
 #pragma once
 #include "Map.h"
 
-enum EntityType { PLAYER, ENEMY };
+enum EntityType { PLAYER, ENEMY, FLAG };
 enum AIType { BUG, WASP };
 enum AIState { PATROL, FLY, CIRCLE };
 
@@ -80,6 +80,9 @@ public:
 
     GLuint    m_texture_id;
 
+    bool m_player_dead = false;
+    bool m_player_win = false;
+
     // ————— METHODS ————— //
     Entity();
     ~Entity();
@@ -93,7 +96,7 @@ public:
     void const check_collision_x(Entity* collidable_entities, int collidable_entity_count);
 
     // Overloading our methods to check for only the map
-    void const check_collision_y(Map* map);
+    void const check_collision_y(Map* map, Mix_Chunk* sfx);
     void const check_collision_x(Map* map);
 
     void move_left() { m_movement.x = -1.0f; };

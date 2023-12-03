@@ -4,7 +4,6 @@
 #define LOG(argument) std::cout << argument << '\n'
 #define GL_GLEXT_PROTOTYPES 1
 #define FIXED_TIMESTEP 0.0166666f
-#define LEVEL1_LEFT_EDGE 5.0f
 
 #ifdef _WINDOWS
 #include <GL/glew.h>
@@ -50,6 +49,8 @@ const GLint LEVEL_OF_DETAIL = 0;
 const GLint TEXTURE_BORDER = 0;
 const int FONTBANK_SIZE = 16;
 
+GLuint font_texture_id;
+
 // ————— GLOBAL VARIABLES ————— //
 Scene* g_current_scene;
 LevelA* g_level_a;
@@ -69,6 +70,8 @@ glm::mat4 g_view_matrix, g_projection_matrix;
 
 float   g_previous_ticks = 0.0f,
         g_accumulator = 0.0f;
+
+int g_number_of_lives = 3;
 
 void switch_to_scene(Scene* scene)
 {
@@ -139,6 +142,9 @@ void initialise()
     g_levels.push_back(g_level_c);
 
     switch_to_scene(g_start_screen);
+
+    // ————— TEXT ————— //
+    font_texture_id = Utility::load_texture("assets/fonts/font1.png");
 
     // ————— BLENDING ————— //
     glEnable(GL_BLEND);
@@ -226,9 +232,9 @@ void game_loop(float delta_time)
     // ————— PLAYER CAMERA ————— //
     g_view_matrix = glm::mat4(1.0f);
 
-    if (g_current_scene->m_state.player->get_position().x < 5.0f) 
+    if (g_current_scene->m_state.player->get_position().x < 4.5f) 
     {
-        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-5, -g_current_scene->m_state.player->get_position().y, 0));
+        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-4.5f, -g_current_scene->m_state.player->get_position().y, 0));
     }
     else if (g_current_scene->m_state.player->get_position().x > g_current_scene->m_state.map->get_width() - 6.0f) 
     {
@@ -244,6 +250,15 @@ void game_loop(float delta_time)
     {
         switch_to_scene(g_levels[g_current_scene->m_state.next_scene_id]);
     }
+
+    if (g_current_scene->m_state.player->m_player_dead) 
+    {
+        --g_number_of_lives;
+        if (g_number_of_lives > 0) g_current_scene->initialise();
+    }
+
+    if (g_number_of_lives == 0) g_lose = true;
+    if (g_current_scene->m_state.player->m_player_win) g_win = true;
 
 }
 
@@ -275,6 +290,9 @@ void render()
     glClear(GL_COLOR_BUFFER_BIT);
 
     g_current_scene->render(&g_shader_program);
+
+    if (g_win) Utility::draw_text(&g_shader_program, font_texture_id, "YOU WIN", 0.3f, 0.0f, glm::vec3(g_current_scene->m_state.player->get_position().x - 1.0f, g_current_scene->m_state.player->get_position().y + 2.0f, 0.0f));
+    if (g_lose) Utility::draw_text(&g_shader_program, font_texture_id, "YOU LOSE", 0.3f, 0.0f, glm::vec3(g_current_scene->m_state.player->get_position().x - 1.0f, g_current_scene->m_state.player->get_position().y + 2.0f, 0.0f));
 
     SDL_GL_SwapWindow(g_display_window);
 }
