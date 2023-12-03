@@ -217,7 +217,7 @@ void process_input()
 
         const Uint8* key_state = SDL_GetKeyboardState(NULL);
 
-        if (key_state[SDL_SCANCODE_LEFT] || key_state[SDL_SCANCODE_A])
+        if ((key_state[SDL_SCANCODE_LEFT] || key_state[SDL_SCANCODE_A]) && g_current_scene->m_state.player->get_position().x > 0.0f)
         {
             g_current_scene->m_state.player->move_left();
             g_current_scene->m_state.player->m_animation_indices = g_current_scene->m_state.player->m_walking[g_current_scene->m_state.player->LEFT];
@@ -249,20 +249,39 @@ void game_loop(float delta_time)
     g_accumulator = delta_time;
 
     // ————— PLAYER CAMERA ————— //
+    float camera_x;
+    float camera_y;
+
+    if (g_current_scene->m_state.player->get_position().x < 4.5f)
+    {
+        camera_x = -4.5;
+    }
+    else if (g_current_scene->m_state.player->get_position().x > g_current_scene->m_state.map->get_width() - 6.0f)
+    {
+        camera_x = -(g_current_scene->m_state.map->get_width() - 6.0f);
+    }
+    else
+    {
+        camera_x = -g_current_scene->m_state.player->get_position().x;
+    }
+
+    if (g_current_scene->m_state.player->get_position().y > -4.0f)
+    {
+        camera_y = 4.0;
+    }
+    else if (g_current_scene->m_state.player->get_position().y < -(g_current_scene->m_state.map->get_height() - 4.5f))
+    {
+        camera_y = (g_current_scene->m_state.map->get_width() - 4.5f);
+    }
+    else
+    {
+        camera_y = -g_current_scene->m_state.player->get_position().y;
+    }
+
     g_view_matrix = glm::mat4(1.0f);
 
-    if (g_current_scene->m_state.player->get_position().x < 4.5f) 
-    {
-        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-4.5f, -g_current_scene->m_state.player->get_position().y, 0));
-    }
-    else if (g_current_scene->m_state.player->get_position().x > g_current_scene->m_state.map->get_width() - 6.0f) 
-    {
-        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-(g_current_scene->m_state.map->get_width() - 6.0f), -g_current_scene->m_state.player->get_position().y, 0.0f));
-    }
-    else 
-    {
-        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-g_current_scene->m_state.player->get_position().x, -g_current_scene->m_state.player->get_position().y, 0.0f));
-    }
+
+    g_view_matrix = glm::translate(g_view_matrix, glm::vec3(camera_x, camera_y, 0.0f));
 
     // ————— NEXT LEVEL ————— //
     if (g_current_scene->m_state.player->get_position().x > g_current_scene->m_state.map->get_width() - 1.0f)
@@ -310,8 +329,8 @@ void render()
     glUseProgram(g_shader_program.get_program_id());
     g_current_scene->render(&g_shader_program);
 
-    if (g_win) Utility::draw_text(&g_shader_program, font_texture_id, "YOU WIN", 0.3f, 0.0f, glm::vec3(g_current_scene->m_state.player->get_position().x - 1.0f, g_current_scene->m_state.player->get_position().y + 2.0f, 0.0f));
-    if (g_lose) Utility::draw_text(&g_shader_program, font_texture_id, "YOU LOSE", 0.3f, 0.0f, glm::vec3(g_current_scene->m_state.player->get_position().x - 1.0f, g_current_scene->m_state.player->get_position().y + 2.0f, 0.0f));
+    if (g_win) Utility::draw_text(&g_shader_program, font_texture_id, "YOU WIN!", 0.4f, 0.0f, glm::vec3(g_current_scene->m_state.player->get_position().x + 1.5f, g_current_scene->m_state.player->get_position().y - 2.0f, 0.0f));
+    if (g_lose) Utility::draw_text(&g_shader_program, font_texture_id, "YOU LOSE!", 0.4f, 0.0f, glm::vec3(g_current_scene->m_state.player->get_position().x - 1.5f, g_current_scene->m_state.player->get_position().y + 2.0f, 0.0f));
 
     SDL_GL_SwapWindow(g_display_window);
 }

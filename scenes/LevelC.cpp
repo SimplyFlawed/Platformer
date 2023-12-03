@@ -71,8 +71,8 @@ void LevelC::initialise()
     // Existing
     m_state.player = new Entity();
     m_state.player->set_entity_type(PLAYER);
-    m_state.player->set_position(glm::vec3(1.0f, -25.0f, 0.0f));
-    m_state.player->set_init_pos(glm::vec3(1.0f, -25.0f, 0.0f));
+    m_state.player->set_position(glm::vec3(0.0f, -25.0f, 0.0f));
+    m_state.player->set_init_pos(glm::vec3(0.0f, -25.0f, 0.0f));
     m_state.player->set_movement(glm::vec3(0.0f));
     m_state.player->set_speed(2.5f);
     m_state.player->set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
